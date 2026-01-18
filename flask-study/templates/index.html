@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ミニ掲示板</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <h1>📝 ミニ掲示板</h1>
+
+    <!-- 投稿フォーム -->
+    <div class="post-form">
+      <h2>新規投稿</h2>
+      <form method="POST" action="/">
+        <input type="text" name="name" placeholder="名前（省略可）" maxlength="50" />
+        <textarea name="message" placeholder="メッセージを入力してください" rows="4" required></textarea>
+        <button type="submit">投稿する</button>
+      </form>
+    </div>
+
+    <!-- 投稿一覧 -->
+    <h2>投稿一覧</h2>
+    {% if posts %} {% for post in posts %}
+    <div class="post">
+      <div class="post-name">{{ post.name }}</div>
+      <div class="post-message">{{ post.message }}</div>
+    </div>
+    {% endfor %} {% else %}
+    <div class="no-posts">まだ投稿がありません</div>
+    {% endif %}
+  </body>
+</html>

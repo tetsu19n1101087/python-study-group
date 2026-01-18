@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: flask-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: flask_db
+    ports:
+      - "5432:5432"
+    volumes:
+      # PostgreSQLのデータを永続化
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  flask:
+    build: .
+    container_name: flask-app
+    environment:
+      USE_DATABASE: "true"
+      DB_USER: postgres
+      DB_PASSWORD: password
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: flask_db
+      FLASK_ENV: development
+    ports:
+      - "5001:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      # コード変更時の自動リロード対応
+      - .:/app
+    command: python main.py
+
+volumes:
+  postgres_data:
